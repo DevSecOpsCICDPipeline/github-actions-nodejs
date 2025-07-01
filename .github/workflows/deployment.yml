@@ -1,9 +1,16 @@
 name: Test Project
-on: [push,workflow_dispatch]
+# on: [push,workflow_dispatch]
+on:
+  pull_request:
+    types: 
+      - opened
+  workflow_dispatch:    
 jobs:
    test:
      runs-on: ubuntu-latest
      steps: 
+       - name : Output event data
+         run: ${{ toJson(github.event) }}
        - name: Checkout Code
          uses: actions/checkout@v4
        - name: Install NodeJS 
