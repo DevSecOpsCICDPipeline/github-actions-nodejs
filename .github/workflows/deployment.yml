@@ -1,16 +1,25 @@
 name: Test Project
 # on: [push,workflow_dispatch]
 on:
-  pull_request:
-    types: 
-      - opened
+  push:
+    branches:
+       - main
+  # pull_request:
+  #   types: 
+  #     - opened
+  #   branches:
+  #     - main
+  #     - 'dev-*'
+  #     - 'feat/**'  
+  #   paths-ignore: 
+  #     - '.github/workflows/*'
+
+
   workflow_dispatch:    
 jobs:
    test:
      runs-on: ubuntu-latest
      steps: 
-       - name : Output event data
-         run: echo "${{ toJson(github.event) }}"
        - name: Checkout Code
          uses: actions/checkout@v4
        - name: Install NodeJS 
