@@ -1,16 +1,25 @@
 name: Test Project
 # on: [push,workflow_dispatch]
 on:
-  pull_request:
-    types: 
-      - opened
+  push:
+    branches:
+       - main
+  # pull_request:
+  #   types: 
+  #     - opened
+  #   branches:
+  #     - main
+  #     - 'dev-*'
+  #     - 'feat/**'  
+  #   paths-ignore: 
+  #     - '.github/workflows/*'
+
+
   workflow_dispatch:    
 jobs:
    test:
      runs-on: ubuntu-latest
      steps: 
-       - name : Output event data
-         run: ${{ toJson(github.event) }}
        - name: Checkout Code
          uses: actions/checkout@v4
        - name: Install NodeJS 
@@ -21,7 +30,7 @@ jobs:
          run: npm ci
        - name: Run tests
          run: npm test     
-   deploye:
+   build:
      needs: test
      runs-on: ubuntu-latest
      steps: 
@@ -35,8 +44,22 @@ jobs:
          run: npm ci
        - name: Build project
          run:  npm run build
-       - name: deploy
-         run: echo "Deploying...."  
-
+       - name:  Upload artifacts
+         uses: actions/upload-artifact@v4
+         with:
+           name: dist-files
+           path: dist
+   deploy:
+     needs: build
+     runs-on: ubuntu-latest
+     steps: 
+       - name: Checkout Code
+         uses: actions/checkout@v4
+       - name: Install NodeJS 
+         uses: actions/setup-node@v4
+         with: 
+            node-version: 18
+       - name:  Deploy
+         run:  echo "Deploying...."   
 
 
